@@ -338,13 +338,14 @@ function updateLab() {
 }
 
 function updateSimulator(bgColor, textColor) {
+    // --- Part 1: Update main palette and AI solution text ---
     const simBg = daltonizeColor(bgColor);
     const simText = daltonizeColor(textColor);
 
-    updatePaletteItem(document.getElementById('origBg'), bgColor);
-    updatePaletteItem(document.getElementById('origText'), textColor);
-    updatePaletteItem(document.getElementById('simBg'), simBg);
-    updatePaletteItem(document.getElementById('simText'), simText);
+    updatePaletteItem(document.getElementById('origBg'), bgColor, "주조색상");
+    updatePaletteItem(document.getElementById('origText'), textColor, "보조색상");
+    updatePaletteItem(document.getElementById('simBg'), simBg, "주조색상");
+    updatePaletteItem(document.getElementById('simText'), simText, "보조색상");
 
     const origRatio = calculateContrast(bgColor, textColor);
     const simRatio = calculateContrast(simBg, simText);
@@ -368,37 +369,32 @@ function updateSimulator(bgColor, textColor) {
     if (simRatio < 4.5) {
         solutionHTML += `<p style="margin-top:10px; font-size: 14px;">명도 차이를 더 확보하거나, 색상 외 다른 시각적 단서(아이콘, 굵기 등) 사용을 권장합니다.</p>`;
     }
-
     document.getElementById('solution-text').innerHTML = solutionHTML;
 
-    // --- New Logic for Contrast Example Boxes ---
-    const secondaryColor = getComplementaryColor(textColor); // Using textColor as secondary for example
+    // --- Part 2: Update the new contrast example boxes ---
 
     // Original Vision Example Box
     const origExampleBox = document.getElementById('orig-contrast-example');
-    const origExampleRatio = calculateContrast(bgColor, secondaryColor);
     let origExampleGrade = '';
-    if (origExampleRatio >= 7) origExampleGrade = ' AAA';
-    else if (origExampleRatio >= 4.5) origExampleGrade = ' AA';
+    if (origRatio >= 7) origExampleGrade = ' AAA';
+    else if (origRatio >= 4.5) origExampleGrade = ' AA';
 
     origExampleBox.style.backgroundColor = bgColor;
-    origExampleBox.style.color = secondaryColor;
-    origExampleBox.querySelector('.ratio-display').textContent = `${origExampleRatio.toFixed(2)}:1${origExampleGrade}`;
+    origExampleBox.style.color = textColor;
+    origExampleBox.querySelector('.ratio-display').textContent = `${origRatio.toFixed(2)}:1${origExampleGrade}`;
 
     // Simulated Vision Example Box
     const simExampleBox = document.getElementById('sim-contrast-example');
-    const simSecondaryExample = daltonizeColor(secondaryColor);
-    const simExampleRatio = calculateContrast(simBg, simSecondaryExample);
     
     simExampleBox.style.backgroundColor = simBg;
-    simExampleBox.style.color = simSecondaryExample;
-    simExampleBox.querySelector('.ratio-display').textContent = `${simExampleRatio.toFixed(2)}:1`;
+    simExampleBox.style.color = simText;
+    simExampleBox.querySelector('.ratio-display').textContent = `${simRatio.toFixed(2)}:1`;
 }
 
-
-function updatePaletteItem(element, color) {
+function updatePaletteItem(element, color, label) {
     element.style.background = color;
     element.querySelector('.hex-code-sim').textContent = color;
+    element.querySelector('.palette-label').textContent = label;
     element.style.color = getContrastingTextColor(color);
 }
 
@@ -463,54 +459,3 @@ function daltonizeColor(hex) {
     const rgb = hexToRgb(hex);
     if (!rgb) return '#000000';
     const r = rgb.r, g = rgb.g, b = rgb.b;
-    const simR = 0.567 * r + 0.433 * g;
-    const simG = 0.558 * r + 0.442 * g;
-    const simB = 0.242 * g + 0.758 * b;
-    const toHex = c => ('0' + Math.round(Math.min(255, c)).toString(16)).slice(-2);
-    return `#${toHex(simR)}${toHex(simG)}${toHex(simB)}`;
-}
-function lightenColor(color, percent) {
-    const num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
-    return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
-}
-function darkenColor(color, percent) {
-    const num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) - amt, G = (num >> 8 & 0x00FF) - amt, B = (num & 0x0000FF) - amt;
-    return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
-}
-function getComplementaryColor(hex){
-    const rgb = hexToRgb(hex);
-    if (!rgb) return '#000000';
-    let r = rgb.r / 255, g = rgb.g / 255, b = rgb.b / 255;
-    let max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-    if (max == min) { h = s = 0; }
-    else {
-        let d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-    h = (h + 0.5) % 1;
-    let r1, g1, b1;
-    if (s == 0) { r1 = g1 = b1 = l; }
-    else {
-        const hue2rgb = (p, q, t) => {
-            if (t < 0) t += 1; if (t > 1) t -= 1;
-            if (t < 1/6) return p + (q - p) * 6 * t;
-            if (t < 1/2) return q;
-            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-            return p;
-        }
-        let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        let p = 2 * l - q;
-        r1 = hue2rgb(p, q, h + 1/3);
-        g1 = hue2rgb(p, q, h);
-        b1 = hue2rgb(p, q, h - 1/3);
-    }
-    const toHex = x => ('0' + Math.round(x * 255).toString(16)).slice(-2);
-    return `#${toHex(r1)}${toHex(g1)}${toHex(b1)}`;
-}

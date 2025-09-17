@@ -338,13 +338,14 @@ function updateLab() {
 }
 
 function updateSimulator(bgColor, textColor) {
+    // --- Part 1: Update main palette and AI solution text ---
     const simBg = daltonizeColor(bgColor);
     const simText = daltonizeColor(textColor);
 
-    updatePaletteItem(document.getElementById('origBg'), bgColor);
-    updatePaletteItem(document.getElementById('origText'), textColor);
-    updatePaletteItem(document.getElementById('simBg'), simBg);
-    updatePaletteItem(document.getElementById('simText'), simText);
+    updatePaletteItem(document.getElementById('origBg'), bgColor, "주조색상");
+    updatePaletteItem(document.getElementById('origText'), textColor, "보조색상");
+    updatePaletteItem(document.getElementById('simBg'), simBg, "주조색상");
+    updatePaletteItem(document.getElementById('simText'), simText, "보조색상");
 
     const origRatio = calculateContrast(bgColor, textColor);
     const simRatio = calculateContrast(simBg, simText);
@@ -368,37 +369,32 @@ function updateSimulator(bgColor, textColor) {
     if (simRatio < 4.5) {
         solutionHTML += `<p style="margin-top:10px; font-size: 14px;">명도 차이를 더 확보하거나, 색상 외 다른 시각적 단서(아이콘, 굵기 등) 사용을 권장합니다.</p>`;
     }
-
     document.getElementById('solution-text').innerHTML = solutionHTML;
 
-    // --- New Logic for Contrast Example Boxes ---
-    const secondaryColor = getComplementaryColor(textColor); // Using textColor as secondary for example
+    // --- Part 2: Update the new contrast example boxes ---
 
     // Original Vision Example Box
     const origExampleBox = document.getElementById('orig-contrast-example');
-    const origExampleRatio = calculateContrast(bgColor, secondaryColor);
     let origExampleGrade = '';
-    if (origExampleRatio >= 7) origExampleGrade = ' AAA';
-    else if (origExampleRatio >= 4.5) origExampleGrade = ' AA';
+    if (origRatio >= 7) origExampleGrade = ' AAA';
+    else if (origRatio >= 4.5) origExampleGrade = ' AA';
 
     origExampleBox.style.backgroundColor = bgColor;
-    origExampleBox.style.color = secondaryColor;
-    origExampleBox.querySelector('.ratio-display').textContent = `${origExampleRatio.toFixed(2)}:1${origExampleGrade}`;
+    origExampleBox.style.color = textColor;
+    origExampleBox.querySelector('.ratio-display').textContent = `${origRatio.toFixed(2)}:1${origExampleGrade}`;
 
     // Simulated Vision Example Box
     const simExampleBox = document.getElementById('sim-contrast-example');
-    const simSecondaryExample = daltonizeColor(secondaryColor);
-    const simExampleRatio = calculateContrast(simBg, simSecondaryExample);
     
     simExampleBox.style.backgroundColor = simBg;
-    simExampleBox.style.color = simSecondaryExample;
-    simExampleBox.querySelector('.ratio-display').textContent = `${simExampleRatio.toFixed(2)}:1`;
+    simExampleBox.style.color = simText;
+    simExampleBox.querySelector('.ratio-display').textContent = `${simRatio.toFixed(2)}:1`;
 }
 
-
-function updatePaletteItem(element, color) {
+function updatePaletteItem(element, color, label) {
     element.style.background = color;
     element.querySelector('.hex-code-sim').textContent = color;
+    element.querySelector('.palette-label').textContent = label;
     element.style.color = getContrastingTextColor(color);
 }
 

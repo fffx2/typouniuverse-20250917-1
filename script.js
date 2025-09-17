@@ -130,9 +130,9 @@ function initializeSliders() {
 function renderKeywords() {
     const { soft, static: staticMood } = appState.mood;
     let groupKey = (soft < 40 && staticMood >= 60) ? 'group1' :
-                   (soft < 40 && staticMood < 40) ? 'group2' :
-                   (soft >= 60 && staticMood < 40) ? 'group3' :
-                   (soft >= 60 && staticMood >= 60) ? 'group4' : 'group5';
+                     (soft < 40 && staticMood < 40) ? 'group2' :
+                     (soft >= 60 && staticMood < 40) ? 'group3' :
+                     (soft >= 60 && staticMood >= 60) ? 'group4' : 'group5';
     
     const { keywords, description } = knowledgeBase.iri_colors[groupKey];
     const keywordContainer = document.getElementById('keyword-tags');
@@ -337,7 +337,6 @@ function updateLab() {
     updateSimulator(bgColor, textColor);
 }
 
-// ============== [수정된 핵심 함수] ==============
 function updateSimulator(bgColor, textColor) {
     const simBg = daltonizeColor(bgColor);
     const simText = daltonizeColor(textColor);
@@ -357,9 +356,9 @@ function updateSimulator(bgColor, textColor) {
         else grade = '기준 미달';
 
         if (ratio >= 4.5) {
-            return `<p style="color:#2e7d32;">✅ **양호**: ${type}, 명도대비율 <strong>${ratio.toFixed(2)}:1</strong>, ${grade}입니다.</p>`;
+            return `<p style="color:#2e7d32;">✅ 양호: ${type}, 명도대비율 <strong>${ratio.toFixed(2)}:1</strong>, ${grade}입니다.</p>`;
         } else {
-            return `<p style="color:#d32f2f;">⚠️ **주의**: ${type}, 명도대비율 <strong>${ratio.toFixed(2)}:1</strong>로 낮아져 구분이 어려울 수 있습니다.</p>`;
+            return `<p style="color:#d32f2f;">⚠️ 주의: ${type}, 명도대비율 <strong>${ratio.toFixed(2)}:1</strong>로 낮아져 구분이 어려울 수 있습니다.</p>`;
         }
     };
 
@@ -371,6 +370,29 @@ function updateSimulator(bgColor, textColor) {
     }
 
     document.getElementById('solution-text').innerHTML = solutionHTML;
+
+    // --- New Logic for Contrast Example Boxes ---
+    const secondaryColor = getComplementaryColor(textColor); // Using textColor as secondary for example
+
+    // Original Vision Example Box
+    const origExampleBox = document.getElementById('orig-contrast-example');
+    const origExampleRatio = calculateContrast(bgColor, secondaryColor);
+    let origExampleGrade = '';
+    if (origExampleRatio >= 7) origExampleGrade = ' AAA';
+    else if (origExampleRatio >= 4.5) origExampleGrade = ' AA';
+
+    origExampleBox.style.backgroundColor = bgColor;
+    origExampleBox.style.color = secondaryColor;
+    origExampleBox.querySelector('.ratio-display').textContent = `${origExampleRatio.toFixed(2)}:1${origExampleGrade}`;
+
+    // Simulated Vision Example Box
+    const simExampleBox = document.getElementById('sim-contrast-example');
+    const simSecondaryExample = daltonizeColor(secondaryColor);
+    const simExampleRatio = calculateContrast(simBg, simSecondaryExample);
+    
+    simExampleBox.style.backgroundColor = simBg;
+    simExampleBox.style.color = simSecondaryExample;
+    simExampleBox.querySelector('.ratio-display').textContent = `${simExampleRatio.toFixed(2)}:1`;
 }
 
 

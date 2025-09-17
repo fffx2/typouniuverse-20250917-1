@@ -130,7 +130,7 @@
                 </div>
                 <div class="guideline-item">
                     <h4 class="guideline-title">모두를 위한 보편적인 디자인</h4>
-                    <p class="guideline-text">  텍스트와 배경 간의 명도 대비를 최소 4.5:1 이상으로 확보하면, 사용자가 색상을 구분하지 못하더라도 밝기 차이를 통해 콘텐츠를 충분히 인식할 수 있다. 즉 잘 설계된 명도 대비는 색상 장벽을 넘어 정보를 전달하는 가장 효과적인 수단이 된다. 색각 이상자를 고려한 디자인은 단순히 소수를 위한 배려가 아니라 모든 사용자에게 더 명확하고 직관적인 인터페이스를 제공하는 보편적 디자인(Universal Design)의 실천이다. 색상에만 의존하지 않고 텍스트, 아이콘, 패턴 등 다중적인 시각적 단서를 제공하고 충분한 명도 대비를 확보하며 검증된 색상 조합을 사용하는 전략을 통해 더욱 포용적인 디지털 환경을 구축할 수 있다. </p>
+                    <p class="guideline-text"> 텍스트와 배경 간의 명도 대비를 최소 4.5:1 이상으로 확보하면, 사용자가 색상을 구분하지 못하더라도 밝기 차이를 통해 콘텐츠를 충분히 인식할 수 있다. 즉 잘 설계된 명도 대비는 색상 장벽을 넘어 정보를 전달하는 가장 효과적인 수단이 된다. 색각 이상자를 고려한 디자인은 단순히 소수를 위한 배려가 아니라 모든 사용자에게 더 명확하고 직관적인 인터페이스를 제공하는 보편적 디자인(Universal Design)의 실천이다. 색상에만 의존하지 않고 텍스트, 아이콘, 패턴 등 다중적인 시각적 단서를 제공하고 충분한 명도 대비를 확보하며 검증된 색상 조합을 사용하는 전략을 통해 더욱 포용적인 디지털 환경을 구축할 수 있다. </p>
                 </div>
             </div>
         </div>
@@ -190,7 +190,7 @@
                         <span>px (기준)</span>
                     </div>
                     <div class="font-unit-guide">
-                         💡 <strong>단위 이해하기:</strong> 웹은 주로 rem 단위를 사용해 반응형 디자인을 구현하고, iOS는 pt, Android는 sp 단위를 사용합니다. rem은 루트 폰트 크기(보통 16px)의 배수로 계산되어 일관된 비율을 유지합니다.
+                        💡 <strong>단위 이해하기:</strong> 웹은 주로 rem 단위를 사용해 반응형 디자인을 구현하고, iOS는 pt, Android는 sp 단위를 사용합니다. rem은 루트 폰트 크기(보통 16px)의 배수로 계산되어 일관된 비율을 유지합니다.
                     </div>
                     <div class="font-unit-cards">
                         <div class="font-unit-card">
@@ -220,12 +220,20 @@
                                 <div class="palette-item" id="origBg"><span class="palette-label">주조색상</span><span class="hex-code-sim"></span></div>
                                 <div class="palette-item" id="origText"><span class="palette-label">보조색상</span><span class="hex-code-sim"></span></div>
                             </div>
+                            <div class="contrast-example-box" id="orig-contrast-example">
+                                <p>배경-텍스트 명도대비 예시입니다.</p>
+                                <span class="ratio-display"></span>
+                            </div>
                         </div>
                         <div class="simulator-card">
                             <div class="simulator-title"> 적록색약 시각</div>
                             <div class="color-palette-sim">
                                 <div class="palette-item" id="simBg"><span class="palette-label">주조색상</span><span class="hex-code-sim"></span></div>
                                 <div class="palette-item" id="simText"><span class="palette-label">보조색상</span><span class="hex-code-sim"></span></div>
+                            </div>
+                            <div class="contrast-example-box" id="sim-contrast-example">
+                                <p>배경-텍스트 명도대비 예시입니다.</p>
+                                <span class="ratio-display"></span>
                             </div>
                         </div>
                     </div>
